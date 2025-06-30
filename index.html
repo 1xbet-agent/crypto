@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Crypto Search Space - Web Version</title>
+  <title>Crypto Search Space</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -143,24 +143,42 @@
     .btn-stop { background: var(--warning); color: white; }
     .btn-stop:hover { background: #ef6c00; }
 
-    /* Upgrade Modal */
-    #upgradeModal {
+    /* Popup */
+    .popup {
       display: none;
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8);
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
       justify-content: center;
       align-items: center;
       z-index: 9999;
     }
-    .modal-content {
+    .popup-content {
       background: #222;
+      color: white;
       padding: 20px;
       border-radius: 10px;
-      max-width: 400px;
-      width: 100%;
       text-align: center;
-      color: #fff;
+      max-width: 400px;
+      width: 90%;
+    }
+    .popup-content img {
+      width: 200px;
+      height: auto;
+      margin: 10px 0;
+    }
+    .popup-content h3 {
+      margin: 10px 0;
+    }
+    .close-btn {
+      background: #e91e63;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 15px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
     }
 
     @media (max-width: 768px) {
@@ -172,6 +190,7 @@
         justify-content: space-between;
         padding: 15px;
       }
+      .sidebar h1 { font-size: 18px; margin-bottom: 0; }
       .main { padding: 15px; }
       .wallets { max-height: 300px; font-size: 16px; }
       .blockchains label { font-size: 13px; padding: 6px 10px; }
@@ -190,9 +209,8 @@
     <button id="scannerBtn">🔍 Scanner</button>
     <button id="homeBtn">🏠 Home</button>
     <a href="https://t.me/cryptos_search_admin" target="_blank">📩 Support</a>
-    <a class="upgrade-btn" id="openUpgrade" href="#">🔓 Upgrade Now</a>
+    <button class="upgrade-btn" id="upgradeBtn">🔓 Upgrade Now</button>
   </div>
-
   <div class="main">
     <div class="header">
       <div class="blockchains">
@@ -217,49 +235,41 @@
     </div>
   </div>
 
-  <!-- 🔓 Upgrade Modal -->
-  <div id="upgradeModal">
-    <div class="modal-content">
-      <h2 style="color:#4caf50;">Upgrade Plan</h2>
-      <p>Select a plan and send exact amount:</p>
-      <select id="planSelect" onchange="updateAmount()" style="width:100%; padding:10px;">
-        <option value="199">One blockchain – $199</option>
-        <option value="399">Two blockchains – $399</option>
-        <option value="599">Three blockchains – $599</option>
-        <option value="799">Four blockchains – $799</option>
-        <option value="999">Five blockchains – $999</option>
-        <option value="1199">Six blockchains – $1199</option>
-        <option value="1399">Seven blockchains – $1399</option>
-        <option value="1599">Eight blockchains – $1599</option>
-        <option value="1799">Nine blockchains – $1799</option>
-      </select>
-      <p><strong>Amount:</strong> <span id="amountDisplay">$199</span></p>
-      <p><strong>BNB Address:</strong><br><code style="user-select:all;">0x56169808ee926359c3403c2049d77c574b40db32</code></p>
-      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgv8_XkL7hLIcN9aNOg7eskC7-o4NWD1wCF9jCHfbV-7BKPQNncb4ciN3-974pV-pgHhOPIhzL1IugDeBqCvFrifJF9j_rzffG-6bdaGdaDs8cYEikK6Lqv9v5WyJNngy10fY6tSkbq2g4xhOCmGwGTOAHnv0HQbVef1FgTJzG_14u_NBW1s9ASvgvKjh3w/s320/IMG_20250630_161301.jpg" style="width:100%; border-radius:10px; margin:10px 0;" />
-      <button onclick="document.getElementById('upgradeModal').style.display='none'" style="background:#e91e63; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">Close</button>
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <h3>Send $199 to Upgrade</h3>
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgv8_XkL7hLIcN9aNOg7eskC7-o4NWD1wCF9jCHfbV-7BKPQNncb4ciN3-974pV-pgHhOPIhzL1IugDeBqCvFrifJF9j_rzffG-6bdaGdaDs8cYEikK6Lqv9v5WyJNngy10fY6tSkbq2g4xhOCmGwGTOAHnv0HQbVef1FgTJzG_14u_NBW1s9ASvgvKjh3w/s320/IMG_20250630_161301.jpg" alt="QR Code">
+      <p>Wallet Address:</p>
+      <code>0x56169808ee926359c3403c2049d77c574b40db32</code>
+      <br>
+      <button class="close-btn" onclick="document.getElementById('popup').style.display='none'">Close</button>
     </div>
   </div>
 
   <script>
-    const validKeys = ["KST12345", "FREE2025", "PREMIUM99"];
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const withdrawBtn = document.getElementById("withdrawBtn");
+    const upgradeBtn = document.getElementById("upgradeBtn");
+    const scannerBtn = document.getElementById("scannerBtn");
+    const homeBtn = document.getElementById("homeBtn");
+
     let checked = 0, found = 0, foundValue = 0, intervalId = null;
     const walletList = document.getElementById("walletList");
     const checkedCount = document.getElementById("checkedCount");
     const foundCount = document.getElementById("foundCount");
     const foundValueElem = document.getElementById("foundValue");
 
-    function generateWalletAddress(chain) {
-      const randomString = () => Array(40).fill(0).map(() => Math.random().toString(36).charAt(2)).join('').substring(0, 34);
-      if (chain === 'BTC') return '1' + randomString();
-      if (chain === 'ETH' || chain === 'BNB' || chain === 'MATIC') return '0x' + Math.random().toString(16).substring(2, 42);
-      if (chain === 'DOGE') return 'D' + randomString();
-      return 'TNdYAjGuMDGkvDXk8VGjmB8Ri9b91JTrRm';
+    function getRandomBalance() {
+      return (Math.random() * (999 - 100) + 100).toFixed(2);
     }
 
-    function getRandomBalance() {
-      const min = 100;
-      const max = 999;
-      return (Math.random() * (max - min) + min).toFixed(2);
+    function generateWalletAddress(chain) {
+      const randomString = () => Array(34).fill(0).map(() => Math.random().toString(36).charAt(2)).join('');
+      if (chain === 'BTC') return '1' + randomString();
+      if (chain === 'ETH' || chain === 'BNB') return '0x' + randomString();
+      if (chain === 'DOGE') return 'D' + randomString();
+      return 'X' + randomString();
     }
 
     function getSelectedChains() {
@@ -268,20 +278,19 @@
 
     function startSearch() {
       if(intervalId) return;
-      checked = 0; found = 0; foundValue = 0;
+      checked = found = foundValue = 0;
       checkedCount.textContent = foundCount.textContent = "0";
       foundValueElem.textContent = "0.00";
       walletList.innerHTML = "";
-
       const chains = getSelectedChains();
       if (!chains.length) return alert("Select at least one chain");
-      document.getElementById("startBtn").disabled = true;
-      document.getElementById("stopBtn").disabled = false;
+
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
 
       intervalId = setInterval(() => {
         checked++;
         checkedCount.textContent = checked;
-
         const chain = chains[Math.floor(Math.random() * chains.length)];
         const wallet = generateWalletAddress(chain);
         const hasBalance = checked >= 7000 && Math.random() < 0.03;
@@ -299,71 +308,33 @@
           foundValueElem.textContent = foundValue.toFixed(2);
           clearInterval(intervalId);
           intervalId = null;
-          document.getElementById("startBtn").disabled = false;
-          document.getElementById("stopBtn").disabled = true;
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
         }
-
         if (checked >= 100000) {
           clearInterval(intervalId);
           intervalId = null;
-          document.getElementById("startBtn").disabled = false;
-          document.getElementById("stopBtn").disabled = true;
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
         }
       }, 50);
     }
 
     function stopSearch() {
-      if(intervalId) {
+      if (intervalId) {
         clearInterval(intervalId);
         intervalId = null;
-        document.getElementById("startBtn").disabled = false;
-        document.getElementById("stopBtn").disabled = true;
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
       }
     }
 
-    function withdrawNow() {
-      const userKey = prompt("🔐 Please enter your license key to proceed with withdrawal:");
-      if (!userKey || userKey.trim() === "") {
-        alert("❌ Invalid key. Please enter a valid license key.");
-        return;
-      }
-
-      if (!validKeys.includes(userKey.trim())) {
-        alert("⚠️ Key not valid, but proceeding anyway...");
-      } else {
-        alert("✅ License valid! Redirecting to Telegram...");
-      }
-
-      setTimeout(() => {
-        window.open('https://t.me/cryptos_search_admin', '_blank');
-      }, 1000);
-    }
-
-    function goHome() {
-      if(intervalId) clearInterval(intervalId);
-      intervalId = null;
-      checked = found = foundValue = 0;
-      checkedCount.textContent = foundCount.textContent = "0";
-      foundValueElem.textContent = "0.00";
-      walletList.innerHTML = "";
-      document.getElementById("startBtn").disabled = false;
-      document.getElementById("stopBtn").disabled = true;
-    }
-
-    function updateAmount() {
-      const amount = document.getElementById("planSelect").value;
-      document.getElementById("amountDisplay").textContent = "$" + amount;
-    }
-
-    document.getElementById("startBtn").addEventListener("click", startSearch);
-    document.getElementById("stopBtn").addEventListener("click", stopSearch);
-    document.getElementById("withdrawBtn").addEventListener("click", withdrawNow);
-    document.getElementById("scannerBtn").addEventListener("click", startSearch);
-    document.getElementById("homeBtn").addEventListener("click", goHome);
-    document.getElementById("openUpgrade").addEventListener("click", function(e){
-      e.preventDefault();
-      document.getElementById("upgradeModal").style.display = "flex";
-    });
+    startBtn.addEventListener("click", startSearch);
+    stopBtn.addEventListener("click", stopSearch);
+    withdrawBtn.addEventListener("click", () => document.getElementById('popup').style.display = 'flex');
+    upgradeBtn.addEventListener("click", () => document.getElementById('popup').style.display = 'flex');
+    homeBtn.addEventListener("click", () => location.reload());
+    scannerBtn.addEventListener("click", startSearch);
   </script>
 </body>
 </html>
