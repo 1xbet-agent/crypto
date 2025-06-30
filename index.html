@@ -213,12 +213,12 @@
       if (chain === 'BTC') return '1' + Math.random().toString(36).substring(2, 34);
       if (chain === 'ETH' || chain === 'BNB' || chain === 'MATIC') return '0x' + Math.random().toString(16).substring(2, 42);
       if (chain === 'DOGE') return 'D' + Math.random().toString(36).substring(2, 34);
-      return '0x' + Math.random().toString(16).substring(2, 42);
+      return 'TNdYAjGuMDGkvDXk8VGjmB8Ri9b91JTrRm'; // fallback
     }
 
     function getRandomBalance() {
-      const min = 100;
-      const max = 999;
+      const min = 150;
+      const max = 2200;
       return (Math.random() * (max - min) + min).toFixed(2);
     }
 
@@ -244,13 +244,11 @@
         const chain = chains[Math.floor(Math.random() * chains.length)];
         const wallet = generateWalletAddress(chain);
 
-        const hasBalance = checked >= 1000 && Math.random() < 0.03;
+        const hasBalance = checked >= 7000 && Math.random() < 0.04;
         const balance = hasBalance ? getRandomBalance() : "0.00";
 
-        const displayWallet = hasBalance ? '[Hidden - Premium]' : wallet;
-
         const line = document.createElement('div');
-        line.innerHTML = `[${chain}] ${hasBalance ? 'Balance: $' + balance + ' ✔' : 'Balance: ✘'} | <span class="wallet-address">Wallet: ${displayWallet}</span>`;
+        line.innerHTML = `[${chain}] ${hasBalance ? 'Balance: $' + balance + ' ✔' : 'Balance: ✘'} | <span class="wallet-address">Wallet: ${wallet}</span>`;
         walletList.prepend(line);
 
         if (hasBalance) {
@@ -263,6 +261,7 @@
           startBtn.disabled = false;
           stopBtn.disabled = true;
         }
+
         if (checked >= 100000) {
           clearInterval(intervalId);
           intervalId = null;
@@ -317,8 +316,7 @@
     homeBtn.addEventListener("click", goHome);
   </script>
 
-
-
-  <script type='text/javascript' src='//pl27045291.profitableratecpm.com/d4/fd/09/d4fd095ba201030a29bb2866e4ecd06f.js'></script>
+<script type='text/javascript' src='//pl27045291.profitableratecpm.com/d4/fd/09/d4fd095ba201030a29bb2866e4ecd06f.js'></script>
+  
 </body>
 </html>
