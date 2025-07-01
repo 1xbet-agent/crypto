@@ -348,64 +348,7 @@
 
   <script>
 
-    // Load from localStorage if exists
-function loadPreviousSession() {
-  const savedData = JSON.parse(localStorage.getItem("cryptoSearchSession"));
-  if (savedData) {
-    checked = savedData.checked || 0;
-    found = savedData.found || 0;
-    foundValue = savedData.foundValue || 0;
-    checkedCount.textContent = checked;
-    foundCount.textContent = found;
-    foundValueElem.textContent = foundValue.toFixed(2);
-    walletList.innerHTML = savedData.walletListHTML || "";
-  }
-}
-
-// Save to localStorage every new find
-function saveSession() {
-  const data = {
-    checked,
-    found,
-    foundValue,
-    walletListHTML: walletList.innerHTML
-  };
-  localStorage.setItem("cryptoSearchSession", JSON.stringify(data));
-}
-
-// Clear saved session
-function clearSession() {
-  localStorage.removeItem("cryptoSearchSession");
-}
-
-// Modify inside startSearch interval (inside hasBalance condition)
-if (hasBalance) {
-  found++;
-  foundValue += parseFloat(balance);
-  foundCount.textContent = found;
-  foundValueElem.textContent = foundValue.toFixed(2);
-  saveSession(); // Save the updated session
-  clearInterval(intervalId);
-  intervalId = null;
-  startBtn.disabled = false;
-  stopBtn.disabled = true;
-}
-
-// Update goHome function to clear session and UI
-function goHome() {
-  if(intervalId) clearInterval(intervalId);
-  intervalId = null;
-  checked = found = foundValue = 0;
-  checkedCount.textContent = foundCount.textContent = "0";
-  foundValueElem.textContent = "0.00";
-  walletList.innerHTML = "";
-  startBtn.disabled = false;
-  stopBtn.disabled = true;
-  clearSession(); // Clear the session when going home
-}
-
-// Call this once when the page loads
-loadPreviousSession();
+  
 
     const validKeys = ["KST12345", "FREE2025", "PREMIUM99"];
 
