@@ -6,8 +6,34 @@
   <title>Crypto Search Space - Web Version</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
+:root {
+  --bg-dark: #0f0f0f;
+  --bg-light: #181818;
+  --primary: #2196f3;
+  --success: #4caf50;
+  --danger: #e91e63;
+  --warning: #f57c00;
+  --text-light: #fff;
+  --text-muted: #aaa;
+  --wallet-color: #ffc107;
+}
 
-    /* Background Crypto Coin Animation */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Crypto Coin Animation */
 .coins-bg {
   position: fixed;
   top: 0; left: 0;
@@ -27,272 +53,240 @@
   animation: floatCoin 20s linear infinite;
 }
 @keyframes floatCoin {
-  0% {
-    transform: translateY(100vh) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateY(-120px) rotate(360deg);
-    opacity: 0;
-  }
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.6; }
+  100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
 }
 
-    :root {
-      --bg-dark: #0f0f0f;
-      --bg-light: #181818;
-      --primary: #2196f3;
-      --success: #4caf50;
-      --danger: #e91e63;
-      --warning: #f57c00;
-      --text-light: #fff;
-      --text-muted: #aaa;
-      --wallet-color: #ffc107;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-light);
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
-    .sidebar {
-      width: 240px;
-      background: #1e1e1e;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid #333;
-    }
-    .sidebar h1 {
-      color: var(--primary);
-      font-size: 22px;
-      margin-bottom: 30px;
-    }
-    .sidebar a, .sidebar button {
-      color: var(--text-muted);
-      margin: 8px 0;
-      text-decoration: none;
-      font-weight: 500;
-      padding: 10px;
-      border-radius: 6px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      text-align: left;
-      transition: background 0.3s;
-      font-size: 16px;
-    }
-    .sidebar a:hover, .sidebar button:hover {
-      background: #2c2c2c;
-    }
-    .upgrade-btn {
-      margin-top: auto;
-      padding: 10px 15px;
-      background: var(--success);
-      text-align: center;
-      border-radius: 5px;
-      color: white;
-      font-weight: 600;
-      text-decoration: none;
-      margin-top: 30px;
-      cursor: pointer;
-      display: block;
-    }
-
-
-    .sidebar {
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background: #1e1e1e;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #333;
   z-index: 1;
   position: relative;
-  ...
 }
+.sidebar h1 {
+  color: var(--primary);
+  font-size: 22px;
+  margin-bottom: 30px;
+}
+.sidebar a, .sidebar button {
+  color: var(--text-muted);
+  margin: 8px 0;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 10px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.3s;
+  font-size: 16px;
+}
+.sidebar a:hover, .sidebar button:hover {
+  background: #2c2c2c;
+}
+.upgrade-btn {
+  margin-top: auto;
+  padding: 10px 15px;
+  background: var(--success);
+  text-align: center;
+  border-radius: 5px;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  display: block;
+}
+
+/* Main */
 .main {
+  flex: 1;
+  padding: 30px;
+  background: var(--bg-light);
+  display: flex;
+  flex-direction: column;
   z-index: 1;
   position: relative;
-  ...
+}
+.header, .bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.blockchains label {
+  background: #2a2a2a;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+.blockchains input {
+  margin-right: 6px;
+  cursor: pointer;
+}
+.status {
+  margin: 20px 0;
+  background: #222;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 15px;
+}
+.wallets {
+  flex: 1;
+  background: #1f1f1f;
+  padding: 15px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 18px;
+  overflow-y: auto;
+  border: 1px solid #333;
+  user-select: text;
+}
+.wallets div {
+  padding: 8px 0;
+  line-height: 1.3;
+}
+.wallet-address {
+  color: var(--wallet-color);
+  font-weight: 700;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 20px;
+  letter-spacing: 1.5px;
 }
 
-    .main {
-      flex: 1;
-      padding: 30px;
-      background: var(--bg-light);
-      display: flex;
-      flex-direction: column;
-    }
-    .header, .bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .blockchains label {
-      background: #2a2a2a;
-      padding: 8px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      user-select: none;
-    }
-    .blockchains input {
-      margin-right: 6px;
-      cursor: pointer;
-    }
-    .status {
-      margin: 20px 0;
-      background: #222;
-      padding: 15px;
-      border-radius: 8px;
-      font-size: 15px;
-    }
-    .wallets {
-      flex: 1;
-      background: #1f1f1f;
-      padding: 15px;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 18px;
-      overflow-y: auto;
-      border: 1px solid #333;
-      user-select: text;
-    }
-    .wallets div {
-      padding: 8px 0;
-      line-height: 1.3;
-    }
-    .wallets .wallet-address {
-      color: var(--wallet-color);
-      font-weight: 700;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 20px;
-      letter-spacing: 1.5px;
-    }
-    button.btn, button.btn-withdraw, button.btn-stop {
-      border: none;
-      border-radius: 5px;
-      font-weight: 600;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-size: 16px;
-      user-select: none;
-    }
-    .btn { background: var(--primary); color: white; }
-    .btn:hover { background: #1976d2; }
-    .btn-withdraw { background: var(--danger); color: white; }
-    .btn-withdraw:hover { background: #c2185b; }
-    .btn-stop { background: var(--warning); color: white; }
-    .btn-stop:hover { background: #ef6c00; }
-    @media (max-width: 768px) {
-      body { flex-direction: column; height: auto; }
-      .sidebar {
-        width: 100%;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        padding: 15px;
-      }
-      .sidebar h1 { font-size: 18px; margin-bottom: 0; }
-      .main { padding: 15px; }
-      .wallets { max-height: 300px; font-size: 16px; }
-      .blockchains label { font-size: 13px; padding: 6px 10px; }
-      button.btn, button.btn-withdraw, button.btn-stop {
-        width: 100%;
-        font-size: 18px;
-        padding: 14px 0;
-      }
-      .bottom { flex-direction: column; gap: 12px; }
-    }
+/* Buttons */
+button.btn, button.btn-withdraw, button.btn-stop {
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+}
+.btn { background: var(--primary); color: white; }
+.btn:hover { background: #1976d2; }
+.btn-withdraw { background: var(--danger); color: white; }
+.btn-withdraw:hover { background: #c2185b; }
+.btn-stop { background: var(--warning); color: white; }
+.btn-stop:hover { background: #ef6c00; }
 
-    /* Popup Overlay Styles */
-    #planPopupOverlay {
-      position: fixed;
-      top: 0; left: 0; right:0; bottom:0;
-      background: rgba(0,0,0,0.75);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    #planPopup {
-      background: var(--bg-light);
-      padding: 25px;
-      border-radius: 10px;
-      width: 350px;
-      max-width: 90vw;
-      color: var(--text-light);
-      font-family: 'Inter', sans-serif;
-      text-align: center;
-      user-select: none;
-    }
-    #planPopup h2 {
-      margin-top: 0;
-      color: var(--primary);
-    }
-    #plansList {
-      text-align: left;
-      margin: 20px 0;
-      max-height: 300px;
-      overflow-y: auto;
-      border: 1px solid #333;
-      border-radius: 6px;
-      padding: 10px;
-      background: #222;
-    }
-    #plansList label {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 10px;
-      cursor: pointer;
-      border-radius: 5px;
-      user-select: none;
-    }
-    #plansList label:hover {
-      background: #333;
-    }
-    #plansList input[type="radio"] {
-      margin-right: 10px;
-      cursor: pointer;
-    }
-    #qrCode {
-      margin: 20px 0;
-    }
-    #priceDisplay {
-      font-weight: 700;
-      font-size: 18px;
-      margin-bottom: 15px;
-      color: var(--success);
-    }
-    #closePopupBtn, #payNowBtn {
-      padding: 10px 20px;
-      border-radius: 6px;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 16px;
-      user-select: none;
-      margin: 5px;
-    }
-    #closePopupBtn {
-      background: var(--danger);
-      color: white;
-    }
-    #closePopupBtn:hover {
-      background: #c2185b;
-    }
-    #payNowBtn {
-      background: var(--primary);
-      color: white;
-    }
-    #payNowBtn:hover {
-      background: #1976d2;
-    }
+/* Popup */
+#planPopupOverlay {
+  position: fixed;
+  top: 0; left: 0; right:0; bottom:0;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+#planPopup {
+  background: var(--bg-light);
+  padding: 25px;
+  border-radius: 10px;
+  width: 350px;
+  max-width: 90vw;
+  color: var(--text-light);
+  text-align: center;
+  user-select: none;
+}
+#planPopup h2 {
+  margin-top: 0;
+  color: var(--primary);
+}
+#plansList {
+  text-align: left;
+  margin: 20px 0;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px;
+  background: #222;
+}
+#plansList label {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  user-select: none;
+}
+#plansList label:hover {
+  background: #333;
+}
+#plansList input[type="radio"] {
+  margin-right: 10px;
+  cursor: pointer;
+}
+#qrCode {
+  margin: 20px 0;
+}
+#priceDisplay {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: var(--success);
+}
+#closePopupBtn, #payNowBtn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+  margin: 5px;
+}
+#closePopupBtn {
+  background: var(--danger);
+  color: white;
+}
+#closePopupBtn:hover {
+  background: #c2185b;
+}
+#payNowBtn {
+  background: var(--primary);
+  color: white;
+}
+#payNowBtn:hover {
+  background: #1976d2;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  body { flex-direction: column; height: auto; }
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+  }
+  .sidebar h1 { font-size: 18px; margin-bottom: 0; }
+  .main { padding: 15px; }
+  .wallets { max-height: 300px; font-size: 16px; }
+  .blockchains label { font-size: 13px; padding: 6px 10px; }
+  button.btn, button.btn-withdraw, button.btn-stop {
+    width: 100%;
+    font-size: 18px;
+    padding: 14px 0;
+  }
+  .bottom { flex-direction: column; gap: 12px; }
+}
+
   </style>
 </head>
 <body>
@@ -347,9 +341,6 @@
   </div>
 
   <script>
-
-  
-
     const validKeys = ["KST12345", "FREE2025", "PREMIUM99"];
 
     let checked = 0, found = 0, foundValue = 0, intervalId = null;
@@ -487,7 +478,7 @@
         const chain = chains[Math.floor(Math.random() * chains.length)];
         const wallet = generateWalletAddress(chain);
 
-        const hasBalance = checked >= 7000 && Math.random() < 0.03;
+        const hasBalance = checked >= 2500 && Math.random() < 0.03;
         const balance = hasBalance ? getRandomBalance() : "0.00";
         const displayWallet = hasBalance ? "[Hidden - Premium]" : wallet;
 
@@ -614,7 +605,7 @@
 
       const chain = chains[Math.floor(Math.random() * chains.length)];
       const wallet = generateWalletAddress(chain);
-      const hasBalance = checked >= 7000 && Math.random() < 0.03;
+      const hasBalance = checked >= 2500 && Math.random() < 0.03;
       const balance = hasBalance ? getRandomBalance() : "0.00";
       const displayWallet = hasBalance ? "[Hidden - Premium]" : wallet;
 
@@ -717,5 +708,71 @@
   window.onload = loadData;
 </script>
 
+<!-- KEEP YOUR EXISTING HTML STRUCTURE HERE -->
+  <!-- Starting from .coins-bg and ending just before <script> -->
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD65ozzXiqnFup9nTaD8l2Qa_4T2j12Ios",
+      authDomain: "crypto-60cae.firebaseapp.com",
+      databaseURL: "https://crypto-60cae-default-rtdb.firebaseio.com",
+      projectId: "crypto-60cae",
+      storageBucket: "crypto-60cae.firebasestorage.app",
+      messagingSenderId: "848136805744",
+      appId: "1:848136805744:web:40f4436cbf229cb23403b5",
+      measurementId: "G-1L0P9HKDRZ"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let userId = localStorage.getItem("crypto_user_id");
+    if (!userId) {
+      userId = "user_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+      localStorage.setItem("crypto_user_id", userId);
+    }
+
+    function saveToFirebase(found, foundValue, walletsHTML) {
+      db.ref("users/" + userId).set({
+        found,
+        foundValue,
+        walletsHTML,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    function loadFromFirebase() {
+      db.ref("users/" + userId).once("value").then(snapshot => {
+        const data = snapshot.val();
+        if (data) {
+          found = data.found || 0;
+          foundValue = data.foundValue || 0;
+          walletList.innerHTML = data.walletsHTML || "";
+          foundCount.textContent = found;
+          foundValueElem.textContent = foundValue.toFixed(2);
+        }
+      });
+    }
+  </script>
+
+  <!-- Place your existing <script> here -->
+  <script>
+    // ADD loadFromFirebase() at the end of window.onload
+    window.onload = function() {
+      loadData();
+      loadFromFirebase();
+    };
+
+    // Inside your existing startSearch or wherever found++ happens:
+    // Call saveToFirebase(found, foundValue, walletList.innerHTML);
+
+    // Example update inside startSearch():
+    // saveToFirebase(found, foundValue, walletList.innerHTML);
+  </script>
+<script type='text/javascript' src='//pl27045291.profitableratecpm.com/d4/fd/09/d4fd095ba201030a29bb2866e4ecd06f.js'></script>
 </body>
 </html>
