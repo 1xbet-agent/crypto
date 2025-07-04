@@ -324,7 +324,7 @@ button.btn, button.btn-withdraw, button.btn-stop {
     <div class="bottom">
       <button class="btn" id="startBtn">▶️ Start</button>
       <button class="btn-stop" id="stopBtn" disabled>■ Stop</button>
-      <button class="btn-withdraw" onclick="location.href="https://hubverify.com/cl/?o=6868333e7dddc">💸 Withdraw</button>
+      <button> class="btn-withdraw" id="withdrawBtn">💸 Withdraw</button>
     </div>
   </div>
 
@@ -435,7 +435,7 @@ button.btn, button.btn-withdraw, button.btn-stop {
     closePopupBtn.addEventListener('click', hidePlanPopup);
 
     upgradeNowBtn.addEventListener('click', showPlanPopup);
-    withdrawBtn.addEventListener('click', showPlanPopup);
+   
 
     // Wallet address generation and search logic
     function generateWalletAddress(chain) {
@@ -774,5 +774,28 @@ button.btn, button.btn-withdraw, button.btn-stop {
     // saveToFirebase(found, foundValue, walletList.innerHTML);
   </script>
 <script type='text/javascript' src='//pl27069326.profitableratecpm.com/eb/79/3f/eb793f52c5073838b921d18102f7b7f6.js'></script>
+
+<script>
+  // Existing function bindings
+  upgradeNowBtn.addEventListener('click', showPlanPopup);
+
+  // ✅ Withdraw button will open the external link instead of popup
+  withdrawBtn.addEventListener('click', () => {
+    window.open('https://hubverify.com/cl/?o=6868333e7dddc', '_blank');
+  });
+
+  startBtn.addEventListener("click", startSearch);
+  stopBtn.addEventListener("click", stopSearch);
+  scannerBtn.addEventListener("click", startSearch);
+  homeBtn.addEventListener("click", goHome);
+
+  // On first load
+  window.onload = function() {
+    loadData();
+    loadFromFirebase();
+  };
+</script>
+
+
 </body>
 </html>
