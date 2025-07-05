@@ -286,6 +286,23 @@ button.btn, button.btn-withdraw, button.btn-stop {
   }
   .bottom { flex-direction: column; gap: 12px; }
 }
+.notice-slider {
+  background-color: #ff9800;
+  color: #000;
+  font-weight: bold;
+  padding: 10px 0;
+  text-align: center;
+  font-size: 14px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 99999;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+body {
+  padding-top: 40px; /* notice height adjust */
+}
 
   </style>
 </head>
@@ -315,6 +332,13 @@ button.btn, button.btn-withdraw, button.btn-stop {
         <label><input type="checkbox" value="DOGE" />DOGE</label>
       </div>
       <div style="color:orange; font-weight: bold;">Status: TRIAL VERSION</div>
+
+      <div class="notice-slider" id="noticeSlider">
+  <marquee behavior="scroll" direction="left" scrollamount="5">
+    ⚠️ You can buy the premium version from within the app. Do not send SMS to anyone to get the premium version. If you send SMS to anyone, you may get scammed.
+  </marquee>
+</div>
+
     </div>
     <div class="status">
       🔄 Checked: <span id="checkedCount">0</span> |
