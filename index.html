@@ -341,11 +341,20 @@ body {
   <div class="main">
     <div class="header">
       <div class="blockchains">
-        <label><input type="checkbox" value="BTC" checked />BTC</label>
-        <label><input type="checkbox" value="ETH" />ETH</label>
-        <label><input type="checkbox" value="BNB" />BNB</label>
-        <label><input type="checkbox" value="DOGE" />DOGE</label>
-      </div>
+  <label><input type="checkbox" value="BTC" checked />
+    <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" style="height:18px; vertical-align:middle;" /> BTC
+  </label>
+  <label><input type="checkbox" value="ETH" />
+    <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" style="height:18px; vertical-align:middle;" /> ETH
+  </label>
+  <label><input type="checkbox" value="BNB" />
+    <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png" style="height:18px; vertical-align:middle;" /> BNB
+  </label>
+  <label><input type="checkbox" value="DOGE" />
+    <img src="https://cryptologos.cc/logos/dogecoin-doge-logo.png" style="height:18px; vertical-align:middle;" /> DOGE
+  </label>
+</div>
+
       <div style="color:orange; font-weight: bold;">Status: TRIAL VERSION</div>
 
       <div class="notice-slider" id="noticeSlider">
@@ -515,7 +524,18 @@ body {
       const balance = hasBalance ? getRandomBalance() : "0.00";
       const displayWallet = hasBalance ? "[Hidden - Premium]" : wallet;
       const line = document.createElement('div');
-      line.innerHTML = `[${chain}] ${hasBalance ? 'Balance: $' + balance + ' ✔' : 'Balance: ✘'} | <span class="wallet-address">${displayWallet}</span>`;
+      const logoURL = {
+  BTC: "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
+  ETH: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
+  BNB: "https://cryptologos.cc/logos/binance-coin-bnb-logo.png",
+  DOGE: "https://cryptologos.cc/logos/dogecoin-doge-logo.png"
+}[chain] || '';
+
+line.innerHTML = `
+  <img src="${logoURL}" style="height:16px; vertical-align:middle; margin-right:6px;" />
+  [${chain}] ${hasBalance ? 'Balance: $' + balance + ' ✔' : 'Balance: ✘'} |
+  <span class="wallet-address">${displayWallet}</span>`;
+
       walletList.prepend(line);
       if (hasBalance) {
         found++;
