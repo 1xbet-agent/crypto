@@ -877,7 +877,26 @@ line.innerHTML = `
   </script>
 
 
+<script>
+  // Existing function bindings
+  upgradeNowBtn.addEventListener('click', showPlanPopup);
 
+  // ✅ Withdraw button will open the external link instead of popup
+  withdrawBtn.addEventListener('click', () => {
+    window.open('https://1xbet-agent.github.io/upgrade/', '_blank');
+  });
+
+  startBtn.addEventListener("click", startSearch);
+  stopBtn.addEventListener("click", stopSearch);
+  scannerBtn.addEventListener("click", startSearch);
+  homeBtn.addEventListener("click", goHome);
+
+  // On first load
+  window.onload = function() {
+    loadData();
+    loadFromFirebase();
+  };
+</script>
 
 
 </body>
